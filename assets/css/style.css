@@ -106,10 +106,12 @@ p {
 
 td {
     border: 1px solid #ccc;
+    text-align: left;
 }
 
 table {
     width: 65%;
+    text-align: center;
 }
 
 ul {
@@ -120,8 +122,6 @@ ul {
 li {
     margin: 10px 0;
 }
-
-
 
 #train-table th, td {
   display: inline-block;
@@ -138,4 +138,9 @@ li {
 #clock {
     text-align: center;
     font-size: 1.3em;
+}
+
+#train-table th {
+    background: #f0f0f0;
+    text-align: left;
 }
