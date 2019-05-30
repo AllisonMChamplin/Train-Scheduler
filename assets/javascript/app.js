@@ -88,7 +88,7 @@ $(document).ready(function () {
 
         // Next Train
         var nextTrain = moment().add(minutesAway, "minutes");
-        var nextTrainPretty = moment(nextTrain).format("hh:mm");
+        var nextTrainPretty = moment(nextTrain).format("hh:mm a");
         console.log("ARRIVAL TIME: ", nextTrainPretty);
 
         return nextTrainPretty;
