@@ -22,7 +22,7 @@ $(document).ready(function () {
     // Clock function
     var intervalId;
     function update() {
-        $('#clock').html("Current Time: " + moment().format('hh:mm:ss a'));
+        $('#clock').html("Current Time: " + moment().format('h:mm:ss a'));
         clearInterval(intervalId);
         intervalId = setInterval(update, 1000);
     };
@@ -56,7 +56,46 @@ $(document).ready(function () {
         $("#first-train-time-input").val("");
         $("#frequency-input").val("");
     });
-    
+
+
+
+
+    var minutesAway = function (trainInfo) {
+
+        var tFrequency = trainInfo.val().frequency;
+        var tStart = trainInfo.val().start;
+
+        // First Time (pushed back 1 year to make sure it comes before current time)
+        var firstTimeConverted = moment(tStart, "HH:mm").subtract(1, "years");
+
+        // Difference between the times
+        var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+        console.log("DIFFERENCE IN TIME: " + diffTime);
+
+        // Time apart (remainder)
+        var tRemainder = diffTime % tFrequency;
+        console.log("tRemainder: ", tRemainder);
+
+        // Minute Until Train
+        var tMinutesTillTrain = tFrequency - tRemainder;
+        console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+        return tMinutesTillTrain;
+    };
+
+
+    var nextArrival = function (minutesAway) {
+
+        // Next Train
+        var nextTrain = moment().add(minutesAway, "minutes");
+        var nextTrainPretty = moment(nextTrain).format("hh:mm");
+        console.log("ARRIVAL TIME: ", nextTrainPretty);
+
+        return nextTrainPretty;
+
+    };
+
+
 
     // 3. Create Firebase event for adding train to the database and a row in the html when a user adds an entry
     trains.on("child_added", function (childSnapshot) {
@@ -67,24 +106,8 @@ $(document).ready(function () {
         var trainDestination = childSnapshot.val().destination;
         var trainStart = childSnapshot.val().start;
         var trainFrequency = childSnapshot.val().frequency;
-
-        // train Info
-        // console.log(trainName);
-        // console.log(trainDestination);
-        // console.log(trainFrequency);
-        // console.log(trainStart);
-
-        // Prettify the train start
-        // var trainStartPretty = moment.unix(trainStart).format("MM/DD/YYYY");
-
-        // Calculate the months worked using hardcore math
-        // To calculate the months worked
-        // var empMonths = moment().diff(moment(trainStart, "X"), "months");
-        // console.log(empMonths);
-
-        // Calculate the total billed frequency
-        // var empBilled = empMonths * trainFrequency;
-        // console.log(empBilled);
+        var minutesAwayCalc = minutesAway(childSnapshot);
+        var nextArrivalTime = nextArrival(minutesAwayCalc);
 
         // Create the new row
         var newRow = $("<tr>").append(
@@ -92,13 +115,15 @@ $(document).ready(function () {
             $("<td>").text(trainDestination),
             $("<td>").text(trainStart),
             $("<td>").text(trainFrequency),
-            $("<td>").text('Next arrival'),
-            $("<td>").text('Minutes away')
+            $("<td>").text(nextArrivalTime),
+            $("<td>").text(minutesAwayCalc)
         );
 
         // Append the new row to the table
         $("#train-table > tbody").append(newRow);
     });
+
+
 
 
     //// Calculation
@@ -116,6 +141,7 @@ $(document).ready(function () {
                 console.log("childKey: ", childKey); // GET THE CHILD KEY!!!!!!!!!!!!!!!
                 console.log("value????????????", childSnapshot.val().name);
                 test.html(childSnapshot.val().name);
+                nextArrival(childSnapshot);
                 // Cancel enumeration
                 // return true; // TRUE WILL STOP AFTER THE FIRST, OTHERWISE LOOPS THROUGH
             });
