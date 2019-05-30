@@ -122,6 +122,7 @@ $(document).ready(function () {
         // Append the new row to the table
         $("#train-table > tbody").append(newRow);
     });
+    
 
 
 
