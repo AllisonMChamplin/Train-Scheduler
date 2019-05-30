@@ -121,3 +121,10 @@ li {
     margin: 10px 0;
 }
 
+
+
+#train-table th, td {
+  display: inline-block;
+  width: 20%;
+}
+
